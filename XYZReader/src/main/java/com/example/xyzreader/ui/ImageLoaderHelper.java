@@ -19,8 +19,8 @@ public class ImageLoaderHelper {
         return sInstance;
     }
 
-    private final LruCache<String, Bitmap> mImageCache = new LruCache<String, Bitmap>(20);
-    private ImageLoader mImageLoader;
+    private final LruCache<String, Bitmap> mImageCache = new LruCache<String, Bitmap>(50);
+    private final ImageLoader mImageLoader;
 
     private ImageLoaderHelper(Context applicationContext) {
         RequestQueue queue = Volley.newRequestQueue(applicationContext);
@@ -32,7 +32,11 @@ public class ImageLoaderHelper {
 
             @Override
             public Bitmap getBitmap(String key) {
-                return mImageCache.get(key);
+                Bitmap bitmap = mImageCache.get(key);
+                if (bitmap != null) {
+                    return bitmap;
+                }
+                return null;
             }
         };
         mImageLoader = new ImageLoader(queue, imageCache);

@@ -7,15 +7,18 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.Loader;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.graphics.Palette;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateUtils;
-import android.util.TypedValue;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -31,10 +34,54 @@ import com.example.xyzreader.data.UpdaterService;
  * touched, lead to a {@link ArticleDetailActivity} representing item details. On tablets, the
  * activity presents a grid of items as cards.
  */
-public class ArticleListActivity extends ActionBarActivity implements
+public class ArticleListActivity extends AppCompatActivity implements
         LoaderManager.LoaderCallbacks<Cursor> {
 
-    private Toolbar mToolbar;
+    /*
+    From Matt Bishop
+    Some helpful stuff here if you're wondering how to style a specific component:
+    http://materialdoc.com/
+
+
+User Feedback for XYZ Reader:
+
+Lyla says:
+
+“This app is starting to shape up but it feels a bit off in quite a few places. I can't put finger on it but it feels odd.”
+
+Jay says:
+
+“Is the text supposed to be so wonky and unreadable? It is not accessible to those of us without perfect vision."
+
+Kagure says:
+
+“The color scheme is really sad and I shouldn't feel sad.”
+
+    */
+
+/*
+This page is a great resource that explains the components of an App Bar (Status Bar, Toolbar, Tab bar, and flexible space)
+http://www.google.com/design/spec/patterns/scrolling-techniques.html?utm_campaign=io15&utm_source=dac&utm_medium=blog#scrolling-techniques-scrolling
+
+The standard app bar is the overarching component that can include the following blocks: a toolbar, tab bar, or flexible space.
+
+It can have one of the following behaviors:
+
+The tab bar stays anchored at the top, while the toolbar scrolls off.
+The app bar stays anchored at the top, with the content scrolling underneath.
+Both the toolbar and tab bar scroll off with content. The tab bar returns on reverse-scroll, and the toolbar returns on complete reverse scroll.
+*/
+
+/*
+This is a good resource for understanding CoordinatorLayout and touch events getting passed to direct children:
+    https://medium.com/google-developers/intercepting-everything-with-coordinatorlayout-behaviors-8c6adc140c26#.i45orpud8
+
+Without CoordinatorLayout, this would often involve subclasses of each ViewGroup as talked about in the Managing Touch Events training.
+However with CoordinatorLayout, CoordinatorLayout is going to pass calls to its onInterceptTouchEvent() onto your Behavior’s onInterceptTouchEvent(),
+ allowing your Behavior a chance to intercept touch events. By returning true there, your Behavior then receives all future touch events through
+ onTouchEvent() — all without the View knowing anything at all about what is going on. This is how, for example, SwipeDismissBehavior works on any View.
+*/
+
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView mRecyclerView;
 
@@ -43,14 +90,42 @@ public class ArticleListActivity extends ActionBarActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_article_list);
 
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(toolbar);
 
+//        final CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+//        collapsingToolbar.setTitle(getString(R.string.app_name));
 
-        final View toolbarContainerView = findViewById(R.id.toolbar_container);
+//        getSupportActionBar().setDisplayShowTitleEnabled(false);
+//
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            final int color = this.getResources().getColor(R.color.ColorPrimaryDark);
+            this.getWindow().setStatusBarColor(color);
+        }
 
-        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
+/*
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.logo);
+        Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
+            @Override
+            public void onGenerated(Palette palette) {
+                int color = palette.getMutedColor(getResources().getColor(R.color.ColorPrimary));
+                collapsingToolbar.setContentScrimColor(color);
+//                collapsingToolbar.setcolor(color);
 
-        mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+            }
+        });
+*/
+
+        /*
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
+*/
+
+//        final View toolbarContainerView = findViewById(R.id.toolbar_container);
+
+//        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
+
+                mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         getLoaderManager().initLoader(0, null, this);
 
         if (savedInstanceState == null) {
@@ -88,7 +163,7 @@ public class ArticleListActivity extends ActionBarActivity implements
     };
 
     private void updateRefreshingUI() {
-        mSwipeRefreshLayout.setRefreshing(mIsRefreshing);
+//        mSwipeRefreshLayout.setRefreshing(mIsRefreshing);
     }
 
     @Override
