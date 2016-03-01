@@ -1,0 +1,15 @@
+# gradle wrapper directory
+.gradle
+.gradle/*.bin
+
+# Local configuration files
+/local.properties
+
+# Ignore Mac Finder files
+.DS_Store
+
+# Ignore Android Studio files
+*.iml
+/.idea
+/build
+/XYZReader/build
