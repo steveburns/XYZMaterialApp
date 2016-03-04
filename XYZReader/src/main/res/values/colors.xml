@@ -28,4 +28,6 @@
     <color name="ColorDivider">#B6B6B6</color>
 
     <color name="ltgray">#ffe0e0e0</color>
+    <color name="darkgray">#333</color>
+    <color name="offwhite">#fff</color>
 </resources>
